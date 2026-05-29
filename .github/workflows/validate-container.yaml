@@ -1,4 +1,4 @@
-name: Validate Yaml
+name: Validate container
 
 on:
     workflow_call:
@@ -8,21 +8,16 @@ on:
                 default: 8.3
                 required: false
                 type: string
-            path:
-                description: Path to Yaml files
-                default: '.github/workflows config translations'
-                required: false
-                type: string
 
 jobs:
-    validate-yaml:
-        name: Validate Yaml
+    validate-container:
+        name: Validate container
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout code
                 uses: actions/checkout@v6
 
-            -   name: Install PHP with extensions
+            -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ inputs.php }}
@@ -32,4 +27,4 @@ jobs:
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
             -   name: Validate
-                run: php bin/console lint:yaml ${{ inputs.path }} --parse-tags
+                run: php bin/console lint:container
