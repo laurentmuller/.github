@@ -9,9 +9,8 @@ on:
                 required: false
                 type: string
 
-
 jobs:
-    markdownlint:
+    lint-markdown:
         name: Validate markdown
         runs-on: ubuntu-latest
         steps:
