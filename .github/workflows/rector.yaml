@@ -1,4 +1,4 @@
-name: Check for bugs with PHPStan static analysis tool
+name: Check for upgrade with Rector static analysis tool
 
 on:
     workflow_call:
@@ -10,14 +10,14 @@ on:
                 type: string
 
             vendor-bin:
-                description: Directory containing PHPStan
-                default: ./vendor-bin/phpstan
+                description: Directory containing Rector
+                default: ./vendor-bin/rector
                 required: false
                 type: string
 
 jobs:
-    phpstan:
-        name: PHPStan
+    rector:
+        name: Rector
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout code
@@ -32,9 +32,9 @@ jobs:
             -   name: Install dependencies
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-            -   name: Install PHPStan
+            -   name: Install Rector
                 working-directory: ${{ inputs.vendor-bin }}
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-            -   name: Run PHPStan
-                run: ${{ inputs.vendor-bin }}/vendor/bin/phpstan analyse --configuration phpstan.neon --memory-limit 2G --no-progress
+            -   name: Run Rector
+                run: ${{ inputs.vendor-bin }}/vendor/bin/rector process --dry-run --no-progress-bar

@@ -5,7 +5,13 @@ on:
         inputs:
             php:
                 description: PHP Version to use
-                default: 8.2
+                default: 8.3
+                required: false
+                type: string
+
+            vendor-bin:
+                description: Directory containing PHP-CS-Fixer
+                default: ./vendor-bin/php-cs-fixer
                 required: false
                 type: string
 
@@ -14,14 +20,21 @@ jobs:
         name: PHP CS Fixer
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
+            -   name: Checkout code
+                uses: actions/checkout@v6
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ inputs.php }}
-                  tools: php-cs-fixer
+            -   name: Install PHP with extensions
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ inputs.php }}
+                    coverage: none
 
-            - name: Run PHP-CS-Fixer
-              run: php-cs-fixer fix --dry-run --diff
+            -   name: Install dependencies
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Install PHP-CS-Fixer
+                working-directory: ${{ inputs.vendor-bin }}
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Run PHP-CS-Fixer
+                run: ${{ inputs.vendor-bin }}/vendor/bin/php-cs-fixer fix --diff --dry-run --show-progress=none
