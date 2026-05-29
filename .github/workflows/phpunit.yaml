@@ -9,21 +9,16 @@ on:
                 required: false
                 type: string
 
-            php-ini:
+            ini-values:
                 description: PHP ini values
                 required: false
                 default: ''
                 type: string
 
-            php-extensions:
+            extensions:
                 description: PHP extensions to install
                 required: false
                 default: ''
-                type: string
-
-            codecov-slug:
-                description: The slug used to upload coverage to Codecov
-                required: true
                 type: string
 
 jobs:
@@ -38,8 +33,8 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ inputs.php }}
-                    ini-values: ${{ inputs.php-ini }}
-                    extensions: ${{ inputs.php-extensions }}
+                    ini-values: ${{ inputs.ini-values }}
+                    extensions: ${{ inputs.extensions }}
                     coverage: xdebug
 
             -   name: Install dependencies
@@ -52,6 +47,6 @@ jobs:
                 uses: codecov/codecov-action@v6
                 with:
                     token: ${{ secrets.CODECOV_TOKEN }}
-                    slug: '${{ inputs.codecov-slug }}'
+                    slug: '${{ github.repository }}'
                     disable_search: true
                     files: ./clover.xml
