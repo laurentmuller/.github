@@ -3,66 +3,55 @@ name: Run PHPUnit tests
 on:
     workflow_call:
         inputs:
-            php-version-matrix:
-                description: PHP versions used in the matrix
+            php:
+                description: PHP Version to use
+                default: 8.3
                 required: false
-                default: '["8.1", "8.2", "8.3", "8.4", "8.5"]'
                 type: string
-            php-version-lowest:
-                description: PHP version for testing lowest deps
+
+            php-ini:
+                description: PHP ini values
                 required: false
-                default: 8.1.0
+                default: ''
                 type: string
-            runs-on:
-                description: The "runs-on" platform config
-                required: false
-                default: 'ubuntu-latest'
-                type: string
+
             php-extensions:
                 description: PHP extensions to install
                 required: false
                 default: ''
                 type: string
 
+            codecov-slug:
+                description: The slug used to upload coverage to Codecov
+                required: true
+                type: string
+
 jobs:
     phpunit:
-        name: PHP ${{ matrix.php-version }}, ${{ matrix.dependency-versions }} deps, ${{ matrix.composer-options }}
-        runs-on: ${{ inputs.runs-on }}
-
-        strategy:
-            fail-fast: false
-            matrix:
-                # normal, highest, non-dev installs
-                php-version: ${{ fromJSON(inputs.php-version-matrix) }}
-                dependency-versions: [highest]
-                composer-options: [--prefer-stable]
-                include:
-                    # testing lowest PHP version with the lowest dependencies
-                    - php-version: ${{ inputs.php-version-lowest }}
-                      dependency-versions: lowest
-                      composer-options: --prefer-lowest
-
-                    # testing dev versions with the highest PHP
-                    - php-version: 8.5
-                      dependency-versions: highest
-                      composer-options: '' # allow dev deps
-
+        name: Run PHPUnit tests
+        runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
+            -   name: Checkout code
+                uses: actions/checkout@v6
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  coverage: none
-                  php-version: ${{ matrix.php-version }}
-                  extensions: ${{ inputs.php-extensions }}
+            -   name: Install PHP with extensions
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ inputs.php }}
+                    ini-values: ${{ inputs.php-ini }}
+                    extensions: ${{ inputs.php-extensions }}
+                    coverage: xdebug
 
-            - name: Install Composer dependencies
-              uses: ramsey/composer-install@v2
-              with:
-                  dependency-versions: ${{ matrix.dependency-versions }}
-                  composer-options: ${{ matrix.composer-options }} --prefer-dist
+            -   name: Install dependencies
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-            - name: Tests
-              run: vendor/bin/simple-phpunit
+            -   name: Run PHPUnit
+                run: vendor/bin/phpunit --display-skipped --no-progress --testsuite test-full --coverage-clover ./clover.xml
+
+            -   name: Upload coverage to Codecov
+                uses: codecov/codecov-action@v6
+                with:
+                    token: ${{ secrets.CODECOV_TOKEN }}
+                    slug: '${{ inputs.codecov-slug }}'
+                    disable_search: true
+                    files: ./clover.xml
