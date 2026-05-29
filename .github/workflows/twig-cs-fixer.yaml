@@ -1,0 +1,40 @@
+name: Check Twig Coding Standards with Twig-CS-Fixer
+
+on:
+    workflow_call:
+        inputs:
+            php:
+                description: PHP Version to use
+                default: 8.3
+                required: false
+                type: string
+
+            vendor-bin:
+                description: Directory containing Twig-CS-Fixer
+                default: ./vendor-bin/twig-cs-fixer
+                required: false
+                type: string
+
+jobs:
+    twig-cs-fixer:
+        name: Twig-CS-Fixer
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Install PHP with extensions
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ inputs.php }}
+                    coverage: none
+
+            -   name: Install dependencies
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Install Twig-CS-Fixer
+                working-directory: ${{ inputs.vendor-bin }}
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Run Twig-CS-Fixer
+                run: ${{ inputs.vendor-bin }}/vendor/bin/twig-cs-fixer lint --config=.twig-cs-fixer.php

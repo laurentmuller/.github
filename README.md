@@ -6,4 +6,4 @@ The code is copied from the [SymfonyCasts/.github](https://github.com/SymfonyCas
 
 The list of repositories that are dependent on this repository:
 
-- [laurentmuller/calculation](https://github.com/laurentmuller/calculation) [![CI](https://github.com/laurentmuller/calculation/actions/workflows/php-cs-fixer.yaml/badge.svg)](https://github.com/laurentmuller/calculation/actions/workflows/php-cs-fixer.yaml)
+- [laurentmuller/calculation](https://github.com/laurentmuller/calculation) [![CI](https://github.com/laurentmuller/calculation/actions/workflows/ci.yaml/badge.svg)](https://github.com/laurentmuller/calculation/actions/workflows/ci.yaml)
