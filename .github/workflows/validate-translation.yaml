@@ -1,0 +1,30 @@
+name: Validate translation
+
+on:
+    workflow_call:
+        inputs:
+            php:
+                description: PHP Version to use
+                default: 8.3
+                required: false
+                type: string
+
+jobs:
+    validate-translation:
+        name: Validate translation
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Install PHP with extensions
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ inputs.php }}
+                    coverage: none
+
+            -   name: Install dependencies
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Validate
+                run: php bin/console lint:translation
