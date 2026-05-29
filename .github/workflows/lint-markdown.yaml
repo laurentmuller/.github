@@ -1,0 +1,24 @@
+name: Validate markdown
+
+on:
+    workflow_call:
+        inputs:
+            globs:
+                description: The globs to check
+                default: '**/*.md'
+                required: false
+                type: string
+
+
+jobs:
+    markdownlint:
+        name: Validate markdown
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Validate markdown
+                uses: DavidAnson/markdownlint-cli2-action@v23
+                with:
+                    globs: ${{ inputs.globs }}
