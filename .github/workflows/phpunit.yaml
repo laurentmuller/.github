@@ -23,7 +23,7 @@ on:
 
             test-suite:
                 description: Test suite to run
-                required: false
+                required: true
                 default: ''
                 type: string
 
