@@ -1,4 +1,4 @@
-name: Validate Twig
+name: Validate Yaml
 
 on:
     workflow_call:
@@ -9,14 +9,14 @@ on:
                 required: false
                 type: string
             path:
-                description: Path to Twig files
-                default: templates
+                description: Path to Yaml files
+                default: '["translations", ".github/workflows"]'
                 required: false
                 type: string
 
 jobs:
-    validate-twig:
-        name: Validate Twig
+    validate-yaml:
+        name: Validate Yaml
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout code
@@ -32,4 +32,4 @@ jobs:
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
             -   name: Validate
-                run: php bin/console lint:twig ${{ inputs.path }} --show-deprecations
+                run: php bin/console lint:yaml ${{ fromJSON(inputs.path) }} --parse-tags

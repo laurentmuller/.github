@@ -1,4 +1,4 @@
-name: Validate markdown
+name: Validate Markdown
 
 on:
     workflow_call:
@@ -10,14 +10,14 @@ on:
                 type: string
 
 jobs:
-    lint-markdown:
-        name: Validate markdown
+    validate-markdown:
+        name: Validate Markdown
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout code
                 uses: actions/checkout@v6
 
-            -   name: Validate markdown
+            -   name: Validate
                 uses: DavidAnson/markdownlint-cli2-action@v23
                 with:
                     globs: ${{ inputs.globs }}
