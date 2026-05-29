@@ -21,6 +21,12 @@ on:
                 default: ''
                 type: string
 
+            test-suite:
+                description: Test suite to run
+                required: false
+                default: ''
+                type: string
+
 jobs:
     phpunit:
         name: Run PHPUnit tests
@@ -41,7 +47,7 @@ jobs:
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
             -   name: Run PHPUnit
-                run: vendor/bin/phpunit --display-skipped --no-progress --testsuite test-full --coverage-clover ./clover.xml
+                run: vendor/bin/phpunit --display-skipped --no-progress --coverage-clover ./clover.xml --testsuite ${{ inputs.test-suite }}
 
             -   name: Upload coverage to Codecov
                 uses: codecov/codecov-action@v6
