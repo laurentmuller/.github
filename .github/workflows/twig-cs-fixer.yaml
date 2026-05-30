@@ -3,7 +3,7 @@ name: Check Twig Coding Standards with Twig-CS-Fixer
 on:
     workflow_call:
         inputs:
-            php:
+            php-version:
                 description: PHP Version to use
                 default: 8.3
                 required: false
@@ -26,7 +26,7 @@ jobs:
             -   name: Install PHP with extensions
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: ${{ inputs.php }}
+                    php-version: ${{ inputs.php-version }}
                     coverage: none
 
             -   name: Install dependencies
